@@ -1,4 +1,5 @@
 class PinsController < ApplicationController
+  before_filter :authenticate_user!, except: [:index]
   before_action :set_pin, only: [:show, :edit, :update, :destroy]
 
   # GET /pins
@@ -14,17 +15,18 @@ class PinsController < ApplicationController
 
   # GET /pins/new
   def new
-    @pin = Pin.new
+    @pin = current_user.pins.new
   end
 
   # GET /pins/1/edit
   def edit
+    @pin = current_user.pins.find(params[:id])
   end
 
   # POST /pins
   # POST /pins.json
   def create
-    @pin = Pin.new(pin_params)
+    @pin = current_user.pins.new(pin_params)
 
     respond_to do |format|
       if @pin.save
@@ -54,6 +56,7 @@ class PinsController < ApplicationController
   # DELETE /pins/1
   # DELETE /pins/1.json
   def destroy
+    @pin = current_user.pins.find(params[:id])
     @pin.destroy
     respond_to do |format|
       format.html { redirect_to pins_url }
